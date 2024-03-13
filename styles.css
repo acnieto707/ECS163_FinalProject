@@ -6,12 +6,12 @@
 
 h2 {
     font-size: 36px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 h3 {
     font-size: 20px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 h4 {
@@ -25,7 +25,9 @@ p.near-h2 {
 }
 
 p {
+    font-size: 16px;
     margin-bottom: 16px;
+    line-height: 1.4rem;
 }
 
 /* wave */
@@ -33,14 +35,9 @@ p {
     position: relative;
     width: 100%;
     height: 70vh;
-    /* background: #fff; */
     background: rgb(171,227,255);
     background: linear-gradient(180deg, rgba(171,227,255,1) 37%, rgba(254,254,254,1) 96%);    
     overflow: hidden ;
-
-    /* display: block;
-    margin-left: auto;
-    margin-right: auto; */
 }
 
 #title {
@@ -92,14 +89,6 @@ p {
     bottom: 8px;
 }
 
-/* #top .wave.wave3 {
-    animation: animate2 15s linear infinite;
-    z-index: 998;
-    opacity: 0.2;
-    animation-delay: -5s;
-    bottom: 5px;
-} */
-
 #top .wave.wave4 {
     animation: animate2 5s linear infinite;
     z-index: 997;
@@ -137,11 +126,26 @@ p {
     overflow: hidden ;
 }
 
+#departure {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
 #departure-para {
     width: 800px;
-    padding: 24px 20px;
+    padding: 24px 20px 8px 20px;
     box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2); 
     border-radius: 5px;
     background-color: rgba(255, 255, 255, .15);
-    /* backdrop-filter: blur(5px); */
+    backdrop-filter: blur(5px);
+}
+
+#bar-graph {
+    padding: 24px 20px 8px 20px;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2); 
+    border-radius: 5px;
+    background-color: #fff;
 }
