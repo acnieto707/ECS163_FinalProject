@@ -4,19 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radar Chart - Survival Rate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">    
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
 
     <section id="top">
+        <h1 id="title">The Impending Doom</h1>
         <div id="titanic-img"><img src="images/titanic.png" width="593" height="315" alt="drawing of titanic"></div>        
         <div class="wave wave1"></div>
         <div class="wave wave2"></div>
         <div class="wave wave3"></div>
-        <div class="wave wave4"></div>
     </section>
-    <section id="content"></section>
+    <div id="content">
+        <section id="departure">
+            <div id="departure-para">
+                <h2>All Aboard - Departures from the Three Ports</h2>
+                <p class="near-h2">The Titanic's maiden voyage in 1912 involved stops at three ports before its tragic encounter with an iceberg. Here's a glimpse into each of these departure points followed by a data visualization on the right.</p>
+                <h3>Southampton, England</h3>
+                <p>Nestled on England's southern coast, Southampton's bustling port was the Titanic's first stop. Passengers were greeted by the city's maritime heritage and the promise of a luxurious voyage.</p>
+                <h3>Cherbourg, France</h3>
+                <p>Cherbourg, a picturesque port city in France, offered a brief stop for Titanic's voyage, where additional passengers boarded via tender boats. Its quaint harbor provided a tranquil contrast to the bustling scenes of Southampton.</p>
+                <h3>Queenstown, Ireland</h3>
+                <p>Queenstown, a charming town on the coast of Ireland (now known as Cobh), was the Titanic's final port of call before setting out across the Atlantic. Here, passengers embarked amidst the scenic beauty of the Irish countryside, unaware of the tragic fate that awaited the grand ship.</p>
+            </div>
+            <div>
+                <svg id="bar-graph" width="600" height="600"></svg>
+            </div>
+        </section>
+        
+    </div>
     <section id="data-visual">
         <div id="buttons"></div>
         <svg id="radarChart" width="600" height="600"></svg>
