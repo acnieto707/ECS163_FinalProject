@@ -47,8 +47,8 @@
             </div>
         </section>
         <section id="collide">
-            <div>
-                <img src="images/iceberg.png" width="50" alt="iceberg">
+            <div id="iceberg-container">
+                <img class="normal-size" id="iceberg-img" src="images/iceberg.png" width="50" alt="iceberg">
             </div>
         </section>
     </div>
@@ -60,6 +60,19 @@
         <svg id="radarChart" width="600" height="600"></svg>
 
         <script>
+
+            // !---- Animation for iceberg ----! //
+            let icebergImg = document.getElementById("iceberg-img");
+
+            document.getElementById("collide").addEventListener("mouseenter", function() {
+                icebergImg.classList.add("enlarged");
+            });
+
+
+            document.getElementById("set-sail").addEventListener("mouseenter", function() {
+                icebergImg.classList.remove("enlarged");
+            });
+            // !---- Data Visualizations Start ---! //
             let width = 600;
             let height = 600;
             let margin = { top: 20, right: 20, bottom: 30, left: 40 }
