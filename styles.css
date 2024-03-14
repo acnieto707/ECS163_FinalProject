@@ -122,7 +122,7 @@ p {
     width: 100%;
     height: 330vh;
     background: rgb(71,143,189);
-    background: linear-gradient(180deg, rgba(71,143,189,1) 0%, rgba(10,15,25,1) 80%);    
+    background: linear-gradient(180deg, rgba(71,143,189,1) 0%, rgba(10,15,25,1) 60%);    
     overflow: hidden ;
 
     display: flex;
@@ -177,6 +177,7 @@ p {
 
     border-top: 1px solid #fefefe;
     border-bottom: 1px solid #fefefe;
+    /* margin-bottom: 500px; */
 }
 
 #sail-para {
@@ -211,4 +212,13 @@ p {
 span {
     font-weight: 700;
     font-size: 32px;
+}
+
+#collide {
+    width: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
