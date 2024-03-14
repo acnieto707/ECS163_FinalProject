@@ -14,7 +14,7 @@
 <body>
 
     <section id="top">
-        <h1 id="title">The Impending Doom</h1>
+        <h1 id="title"><span id="span-title">Un</span>sinkable</h1>
         <div id="titanic-img"><img src="images/titanic.png" width="593" height="315" alt="drawing of titanic"></div>        
         <div class="wave wave1"></div>
         <div class="wave wave2"></div>
@@ -42,7 +42,7 @@
         <section id="set-sail">
             <div id="sail">
                 <p id="quotes-l">"</p>
-                <p id="sail-para">My, what a grand sight she is! Such a marvel of modern engineering. It fills one with a sense of awe and excitement to be boarding such a magnificent vessel. I can hardly believe that we're about to embark on this journey across the Atlantic. <span>May this voyage be smooth and prosperous, and may we all reach our destination safely...</span></p>
+                <p id="sail-para">My, what a grand sight she is! Such a marvel of modern engineering. It fills one with a sense of awe and excitement to be boarding such a magnificent vessel. I can hardly believe that we're about to embark on this journey across the Atlantic. <span id="span-para">May this voyage be smooth and prosperous, and may we all reach our destination safely...</span></p>
                 <p id="quotes-r">"</p>
             </div>
         </section>
@@ -50,6 +50,12 @@
             <div id="iceberg-container">
                 <img class="normal-size" id="iceberg-img" src="images/iceberg.png" width="50" alt="iceberg">
             </div>
+            <div id="text-container">
+                <p class="hidden"><span class="quotesL">"</span>Slow ahead. Stop the engines!<span class="quotes">"</p>
+                <p class="hidden"><span class="quotesL">"</span>Did you feel that? It felt like we hit something...Is everything alright?<span class="quotes">"</p>
+                <p class="hidden"><span class="quotesL">"</span>Please remain calm, ladies and gentlemen. We're investigating the situation. Everything will be under control.<span class="quotes">"</p>
+                <p class="hidden"><span class="quotesL">"</span>I thought we were supposed to be unsinkable. What if something's wrong?<span class="quotes">"</p>
+            </div>        
         </section>
     </div>
         
@@ -63,6 +69,8 @@
 
             // !---- Animation for iceberg ----! //
             let icebergImg = document.getElementById("iceberg-img");
+            let textContainer = document.getElementById("collide");
+            let paragraphs = textContainer.querySelectorAll("p");
 
             document.getElementById("collide").addEventListener("mouseenter", function() {
                 icebergImg.classList.add("enlarged");
@@ -71,7 +79,22 @@
 
             document.getElementById("set-sail").addEventListener("mouseenter", function() {
                 icebergImg.classList.remove("enlarged");
+                paragraphs.forEach(paragraph => {
+                    paragraph.classList.add("hidden");
+                });
             });
+
+            // !---- Text Loading ----! //
+            document.getElementById("iceberg-img").addEventListener("transitionend", function(event) {
+                if (event.propertyName === 'width' && this.classList.contains('enlarged')) {
+                    paragraphs.forEach((paragraph, index) => {
+                        setTimeout(() => {
+                            paragraph.classList.remove("hidden");
+                        }, index * 1500); 
+                    });
+                }
+            });
+
             // !---- Data Visualizations Start ---! //
             let width = 600;
             let height = 600;

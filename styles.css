@@ -52,6 +52,11 @@ p {
     text-align: center;
 }
 
+#span-title {
+    text-decoration: line-through;
+    text-decoration-color: rgba(0, 0, 0);
+}
+
 #titanic-img {
     position: absolute;
     bottom: 0;
@@ -177,7 +182,7 @@ p {
 
     border-top: 1px solid #fefefe;
     border-bottom: 1px solid #fefefe;
-    /* margin-bottom: 500px; */
+    margin-bottom: 100px;
 }
 
 #sail-para {
@@ -209,10 +214,11 @@ p {
     margin-left: 24px;
 }
 
-span {
+#span-para {
     font-weight: 700;
     font-size: 32px;
-}
+    text-decoration: line-through;
+    text-decoration-color: rgb(255, 255, 255, 0.5);}
 
 #collide {
     width: 100vh;
@@ -222,6 +228,7 @@ span {
     align-items: center;
     justify-content: center;
     overflow: visible;
+    position: relative;
 }
 
 #iceberg-img {
@@ -230,5 +237,39 @@ span {
 }
 
 #iceberg-img.enlarged {
-    width: 2000px; 
+    width: 1500px; 
+}
+
+#text-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+#text-container p {
+    margin: 16px 0;
+    color: #fefefe;
+    font-size: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.quotes {
+    color: #fefefe;
+    font-family: "Catamaran", sans-serif;
+}
+
+.quotesL {
+    color: #fefefe;
+    font-family: "Catamaran", sans-serif;
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
 }
