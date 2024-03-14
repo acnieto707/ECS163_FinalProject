@@ -51,7 +51,7 @@
                 <img class="normal-size" id="iceberg-img" src="images/iceberg.png" width="50" alt="iceberg">
             </div>
             <div id="text-container">
-                <p class="hidden"><span class="quotesL">"</span>Slow ahead. Stop the engines!<span class="quotes">"</p>
+                <p class="hidden"><span class="quotesL">"</span>Slow down ahead. Stop the engines!<span class="quotes">"</p>
                 <p class="hidden"><span class="quotesL">"</span>Did you feel that? It felt like we hit something...Is everything alright?<span class="quotes">"</p>
                 <p class="hidden"><span class="quotesL">"</span>Please remain calm, ladies and gentlemen. We're investigating the situation. Everything will be under control.<span class="quotes">"</p>
                 <p class="hidden"><span class="quotesL">"</span>I thought we were supposed to be unsinkable. What if something's wrong?<span class="quotes">"</p>
@@ -63,11 +63,12 @@
                 <p class="end-para">So, who survived?</p>
             </div>
             <div id="end-arrow">
-                <p id="learn-more">Learn more below</p>
+                <p id="learn-more">Learn more with our main visualization</p>
                 <img src="images/chevron-down.svg" width="24" alt="down arrow">
             </div>
         </section>
-        
+    </div>
+    <div class="main-vis">
         <section id="data-visual">
             <div id="buttons"></div>
             <svg id="radarChart" width="600" height="600"></svg>
@@ -82,7 +83,6 @@
                 document.getElementById("collide").addEventListener("mouseenter", function() {
                     icebergImg.classList.add("enlarged");
                 });
-
 
                 document.getElementById("set-sail").addEventListener("mouseenter", function() {
                     icebergImg.classList.remove("enlarged");
@@ -131,7 +131,18 @@
                     return coordinates;
                 }
 
-                function createRadarChart(data, features, labels) {
+                function createRadarChart(data, features, labels, title) {
+                    d3.select("#radarChart").selectAll(".chart-title").remove()
+
+                    // Add title
+                    svg.append("text")
+                    .attr("class", "chart-title")
+                    .attr("x", width / 2)
+                    .attr("y", margin.top + 5)
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "20px")
+                    .text(title);
+
                     // Draw circles
                     svg.selectAll("circle").remove();
                     svg.selectAll("circle")
@@ -160,7 +171,7 @@
                             "name": f,
                             "angle": angle,
                             "line_coord": angleToCoordinate(angle, 1),
-                            "label_coord": angleToCoordinate(angle, 1.1)
+                            "label_coord": angleToCoordinate(angle, 1.2)
                         };
                     });
 
@@ -197,19 +208,85 @@
                         .merge(path)
                         .transition().duration(2000)
                         .attr("d", d => line(getPathCoordinates(d, features)))
-                        .attr("stroke", "purple")
-                        .attr("fill", "purple");
+                        .attr("stroke", "steelblue")
+                        .attr("fill", "steelblue");
+                        
+                    // Create legend
+                    let legend = svg.append("g")
+                        .attr("class", "legend")
+                        .attr("transform", `translate(${innerWidth}, ${margin.top})`)
+                        .style("overflow", "visible");
+
+                    // Add legend title
+                    legend.append("text")
+                        .attr("class", "legend-title")
+                        .text("Legend:")
+                        .attr("font-weight", "bold")
+                        .attr("dy", -10);
+
+                    // Add legend items
+                    features.forEach((feature, index) => {
+                        legend.append("text")
+                        .attr("class", "legend-item")
+                        .attr("x", 0)
+                        .attr("y", index * 20)
+                        .text(feature)
+                        .attr("dy", 15);
+                    });                
                 }
 
-            function createButton(attribute, data, features, labels) {
+            function createButton(attribute, data, features, labels, title) {
                     let button = document.createElement("button");
                     button.textContent = `${attribute}`;
                     button.addEventListener("click", function () {
-                        createRadarChart(data, features, labels);
+                        createRadarChart(data, features, labels, title);
+                        updateLegend(attribute);
                     });
                     document.getElementById("buttons").appendChild(button);
-            }        
+                    createRadarChart(data, features, labels, attribute);
+                    updateLegend(attribute);            
+                }        
 
+            function updateLegend(category) {
+                // console.log("Updating legend for category:", category);
+                d3.selectAll(".legend-item").remove();
+
+                // Define legends based on the selected category
+                let legends;
+                switch (category) {
+                    case "Pclass":
+                        legends = ["1: First Class", "2: Second Class", "3: Third Class"];
+                        break;
+                    case "Fare":
+                        legends = ["$0~49", "$50~99", "$100~149", "$150~199", "$200~"];
+                        break;
+                    case "Age":
+                        legends = ["0~19 years old", "20~39 years old", "40~59 years old", "60~79 years old", "80~ years old"];
+                        break;
+                    case "Embarked":
+                        legends = ["C: Cherbourg", "Q: Queenstown", "S: Southampton"];
+                        break;
+                    case "Ticket":
+                        legends = ["$0~100000", "$100000~200000", "$300000~"];
+                        break;
+                    case "Gender":
+                        legends = ["Male", "Female"];
+                        break;
+                    default:
+                        legends = [];
+                }
+
+                // Append new legend items based on the selected category
+                let legendContainer = d3.select("#radarChart").select(".legend");
+                    legends.forEach((legend, index) => {
+                        legendContainer.append("text")
+                            .attr("class", "legend-item")
+                            .attr("x", 0)
+                            .attr("y", (index + 1) * 20)
+                            .text(legend)
+                            .attr("dy", 15);
+                    });            
+            }
                 // !---- Data Processing ----! //
                 d3.csv("Titanic_dataset.csv").then(function (data) {
                     
@@ -293,9 +370,9 @@
                     let survivalDataTicket = d3.nest()
                         .key(function (d) {
                             let age = +d.ticket;
-                            if (age < 100000) return "0~100000";
-                            else if (age < 200000 ) return "100000~200000";
-                            else return "300000~";
+                            if (age < 100000) return "0~100k";
+                            else if (age < 200000 ) return "100k~200k";
+                            else return "300k~";
                         })
                         .rollup(function (v) {
                             let total = v.length;
@@ -307,16 +384,16 @@
                             return { key: d.key, value: d.value };
                         });
 
-                    createButton("Pclass", survivalDataPclass, ["1", "2", "3"], true);
-                    createButton("Fare", survivalDataFare, ["0~49", "50~99", "100~149", "150~199", "200~"], true);
-                    createButton("Age", survivalDataAge, ["0~19", "20~39", "40~59", "60~79", "80~"], true);
-                    createButton("Embarked", survivalDataEmbarked, ["C","Q","S"], true);
-                    createButton("Ticket", survivalDataTicket, ["0~100000","100000~200000","300000~"], true);
-                    createButton("Gender", survivalDataGender, ["male","female"], true);
-                    
 
-                    // Initial radar chart display
-                    createRadarChart(survivalDataPclass, ["1","2","3"], true);
+                    createButton("Pclass", survivalDataPclass, ["1", "2", "3"], true, "Survival Rate by Passenger Class");
+                    createButton("Fare", survivalDataFare, ["$0~49", "50~99", "100~149", "150~199", "200~"], true, "Survival Rate by Fare Paid");
+                    createButton("Age", survivalDataAge, ["0~19", "20~39", "40~59", "60~79", "80~"], true, "Survival Rate by Age");
+                    createButton("Embarked", survivalDataEmbarked, ["C","Q","S"], true, "Survival Rate by Embarked Port");
+                    createButton("Ticket", survivalDataTicket, ["0~100k","100k~200k","300k~"], true, "Survival Rate by Ticket Price");
+                    createButton("Gender", survivalDataGender, ["male","female"], true, "Survival Rate by Gender");
+                    
+                    createRadarChart(survivalDataPclass, ["1","2","3"], true, "Survival Rate by Passenger Class");
+                    updateLegend("Pclass")
                 });
 
                 // !---- Bar Chart ----! //
@@ -332,7 +409,6 @@
                         })
                         .entries(data)
                         .map(function(d) {
-                            console.log("d.key.length: ", d.key.length)
                                 return { key: d.key, embarked_total: d.value.total_embarked_port };
                         });
                         
