@@ -59,7 +59,7 @@
         </section>
         <section id="end">
             <div id="ending-group">
-                <p class="end-para">And with that, the Titanic crashes...</p>
+                <p class="end-para">And with that, the Titanic unfortunately crashes...</p>
                 <p class="end-para">So, who survived?</p>
             </div>
             <div id="end-arrow">
@@ -67,409 +67,403 @@
                 <img src="images/chevron-down.svg" width="24" alt="down arrow">
             </div>
         </section>
-    </div>
         
-        
-    </div>
-    <section id="data-visual">
-        <div id="buttons"></div>
-        <svg id="radarChart" width="600" height="600"></svg>
+        <section id="data-visual">
+            <div id="buttons"></div>
+            <svg id="radarChart" width="600" height="600"></svg>
 
-        <script>
+            <script>
 
-            // !---- Animation for iceberg ----! //
-            let icebergImg = document.getElementById("iceberg-img");
-            let textContainer = document.getElementById("collide");
-            let paragraphs = textContainer.querySelectorAll("p");
+                // !---- Animation for iceberg ----! //
+                let icebergImg = document.getElementById("iceberg-img");
+                let textContainer = document.getElementById("collide");
+                let paragraphs = textContainer.querySelectorAll("p");
 
-            document.getElementById("collide").addEventListener("mouseenter", function() {
-                icebergImg.classList.add("enlarged");
-            });
-
-
-            document.getElementById("set-sail").addEventListener("mouseenter", function() {
-                icebergImg.classList.remove("enlarged");
-                paragraphs.forEach(paragraph => {
-                    paragraph.classList.add("hidden");
-                });
-            });
-
-            // !---- Text Loading ----! //
-            document.getElementById("iceberg-img").addEventListener("transitionend", function(event) {
-                if (event.propertyName === 'width' && this.classList.contains('enlarged')) {
-                    paragraphs.forEach((paragraph, index) => {
-                        setTimeout(() => {
-                            paragraph.classList.remove("hidden");
-                        }, index * 1500); 
-                    });
-                }
-            });
-
-            // !---- Data Visualizations Start ---! //
-            let width = 600;
-            let height = 600;
-            let margin = { top: 20, right: 20, bottom: 30, left: 40 }
-            const innerWidth = width - margin.left - margin.right;
-            const innerHeight = height - margin.top - margin.bottom;
-
-            // !---- Radial Chart ----! //
-            let svg = d3.select("#radarChart");
-
-            let radialScale = d3.scaleLinear().domain([0, 1]).range([0, 200]);
-            let line = d3.line().x(d => d.x).y(d => d.y);
-
-            function angleToCoordinate(angle, value) {
-                let x = Math.cos(angle) * radialScale(value);
-                let y = Math.sin(angle) * radialScale(value);
-                return { "x": width / 2 + x, "y": height / 2 - y };
-            }
-
-            function getPathCoordinates(data_point, features) {
-                let coordinates = features.map((f, i) => {
-                    let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
-                    let value = data_point.find(d => d.key === f);
-                    return angleToCoordinate(angle, value ? value.value : 0);
-                });
-                coordinates.push(coordinates[0]); // Close the path
-                return coordinates;
-            }
-
-            function createRadarChart(data, features, labels) {
-                // Draw circles
-                svg.selectAll("circle").remove();
-                svg.selectAll("circle")
-                    .data([0.2, 0.4, 0.6, 0.8, 1.0])
-                    .enter().append("circle")
-                    .attr("cx", width / 2)
-                    .attr("cy", height / 2)
-                    .attr("fill", "none")
-                    .attr("stroke", "gray")
-                    .attr("r", d => radialScale(d));
-
-                // Add ticks
-                svg.selectAll(".ticklabel").remove();
-                svg.selectAll(".ticklabel")
-                    .data([0.2, 0.4, 0.6, 0.8, 1.0])
-                    .enter().append("text")
-                    .attr("class", "ticklabel")
-                    .attr("x", width / 2 + 5)
-                    .attr("y", d => height / 2 - radialScale(d))
-                    .text(d => Math.round(d * 100) + "%");
-
-                // Plotting the Axes
-                let featureData = features.map((f, i) => {
-                    let angle = (Math.PI / 2) - (2 * Math.PI * i / features.length);
-                    return {
-                        "name": f,
-                        "angle": angle,
-                        "line_coord": angleToCoordinate(angle, 1),
-                        "label_coord": angleToCoordinate(angle, 1.1)
-                    };
+                document.getElementById("collide").addEventListener("mouseenter", function() {
+                    icebergImg.classList.add("enlarged");
                 });
 
-                // Draw axis line
-                svg.selectAll("line").remove();
-                svg.selectAll("line")
-                    .data(featureData)
-                    .enter().append("line")
-                    .attr("x1", width / 2)
-                    .attr("y1", height / 2)
-                    .attr("x2", d => d.line_coord.x)
-                    .attr("y2", d => d.line_coord.y)
-                    .attr("stroke", "black");
 
-                // Draw axis label
-                svg.selectAll(".axislabel").remove();
-                if (labels) {
-                    svg.selectAll(".axislabel")
-                        .data(featureData)
-                        .enter().append("text")
-                        .attr("class", "axislabel")
-                        .attr("x", d => d.label_coord.x)
-                        .attr("y", d => d.label_coord.y)
-                        .text(d => d.name);
-                }
-
-                // Draw radar chart
-                let path = svg.selectAll("path").data([data]);
-                path.exit().remove();
-                path.enter().append("path")
-                    .attr("stroke-width", 3)
-                    .attr("stroke-opacity", 1)
-                    .attr("opacity", 0.5)
-                    .merge(path)
-                    .transition().duration(2000)
-                    .attr("d", d => line(getPathCoordinates(d, features)))
-                    .attr("stroke", "purple")
-                    .attr("fill", "purple");
-            }
-
-        function createButton(attribute, data, features, labels) {
-                let button = document.createElement("button");
-                button.textContent = `${attribute}`;
-                button.addEventListener("click", function () {
-                    createRadarChart(data, features, labels);
+                document.getElementById("set-sail").addEventListener("mouseenter", function() {
+                    icebergImg.classList.remove("enlarged");
+                    paragraphs.forEach(paragraph => {
+                        paragraph.classList.add("hidden");
+                    });
                 });
-                document.getElementById("buttons").appendChild(button);
-        }        
 
-            // !---- Data Processing ----! //
-            d3.csv("Titanic_dataset.csv").then(function (data) {
-                
-                let survivalDataPclass = d3.nest()
-                    .key(function (d) { return d.pclass.toString(); })
-                    .rollup(function (v) {
-                        let total = v.length;
-                        let survived = d3.sum(v, function (d) { return +d.survived; });
-                        return survived / total;
-                    })
-                    .entries(data)
-                    .map(function (d) {
-                        return { key: d.key, value: d.value };
-                    });
+                // !---- Text Loading ----! //
+                document.getElementById("iceberg-img").addEventListener("transitionend", function(event) {
+                    if (event.propertyName === 'width' && this.classList.contains('enlarged')) {
+                        paragraphs.forEach((paragraph, index) => {
+                            setTimeout(() => {
+                                paragraph.classList.remove("hidden");
+                            }, index * 1500); 
+                        });
+                    }
+                });
 
-                let survivalDataFare = d3.nest()
-                    .key(function (d) {
-                        let fare = +d.fare;
-                        if (fare < 50) return "0~49";
-                        else if (fare < 100) return "50~99";
-                        else if (fare < 150) return "100~149";
-                        else if (fare < 200) return "150~199";
-                        else return "200~";
-                    })
-                    .rollup(function (v) {
-                        let total = v.length;
-                        let survived = d3.sum(v, function (d) { return +d.survived; });
-                        return survived / total;
-                    })
-                    .entries(data)
-                    .map(function (d) {
-                        return { key: d.key, value: d.value };
-                    });
-
-                let survivalDataAge = d3.nest()
-                    .key(function (d) {
-                        let age = +d.age;
-                        if (age < 20) return "0~19";
-                        else if (age < 40) return "20~39";
-                        else if (age < 60) return "40~59";
-                        else if (age < 80) return "60~79";
-                        else return "80~";
-                    })
-                    .rollup(function (v) {
-                        let total = v.length;
-                        let survived = d3.sum(v, function (d) { return +d.survived; });
-                        return survived / total;
-                    })
-                    .entries(data)
-                    .map(function (d) {
-                        return { key: d.key, value: d.value };
-                    });
-
-                let survivalDataEmbarked = d3.nest()
-                    .key(function (d) { return d.embarked.toString(); })
-                    .rollup(function (v) {
-                        let total = v.length;
-                        let survived = d3.sum(v, function (d) { return +d.survived; });
-                        return {
-                            "percent_survived": survived / total,
-                            "total_embarked_port": total
-                        };
-                    })
-                    .entries(data)
-                    .map(function (d) {
-                        return { key: d.key, value: d.value.percent_survived, embarked_total: d.value.total_embarked_port };
-                    });
-
-                let survivalDataGender = d3.nest()
-                    .key(function (d) { return d.sex.toString(); })
-                    .rollup(function (v) {
-                        let total = v.length;
-                        let survived = d3.sum(v, function (d) { return +d.survived; });
-                        return survived / total;
-                    })
-                    .entries(data)
-                    .map(function (d) {
-                        return { key: d.key, value: d.value };
-                    });
-                
-                let survivalDataTicket = d3.nest()
-                    .key(function (d) {
-                        let age = +d.ticket;
-                        if (age < 100000) return "0~100000";
-                        else if (age < 200000 ) return "100000~200000";
-                        else return "300000~";
-                    })
-                    .rollup(function (v) {
-                        let total = v.length;
-                        let survived = d3.sum(v, function (d) { return +d.survived; });
-                        return survived / total;
-                    })
-                    .entries(data)
-                    .map(function (d) {
-                        return { key: d.key, value: d.value };
-                    });
-
-                createButton("Pclass", survivalDataPclass, ["1", "2", "3"], true);
-                createButton("Fare", survivalDataFare, ["0~49", "50~99", "100~149", "150~199", "200~"], true);
-                createButton("Age", survivalDataAge, ["0~19", "20~39", "40~59", "60~79", "80~"], true);
-                createButton("Embarked", survivalDataEmbarked, ["C","Q","S"], true);
-                createButton("Ticket", survivalDataTicket, ["0~100000","100000~200000","300000~"], true);
-                createButton("Gender", survivalDataGender, ["male","female"], true);
-                
-
-                // Initial radar chart display
-                createRadarChart(survivalDataPclass, ["1","2","3"], true);
-            });
-
-            // !---- Bar Chart ----! //
-            d3.csv("Titanic_dataset.csv").then(function(data) {
-                // Data processing code specifically for the bar graph here...
-                
-                // Store survivalDataEmbarked in the outer scope
-                let survivalDataEmbarked = d3.nest()
-                    .key(function(d) { return d.embarked.toString(); })
-                    .rollup(function(v) {
-                        let total = v.length;
-                        let survived = d3.sum(v, function(d) { return +d.survived; });
-                        return {
-                            "total_embarked_port": total
-                        };
-                    })
-                    .entries(data)
-                    .map(function(d) {
-                        console.log("d.key.length: ", d.key.length)
-                            return { key: d.key, embarked_total: d.value.total_embarked_port };
-                    });
-                    
-                // Call createBarGraph after the data is processed
-                createBarGraph(survivalDataEmbarked);
-            });
-
-            function createBarGraph(data) {
-                // Remove any existing bar graph
-                d3.select("#bar-graph").remove();
-
-                // Filtering data
-                data = data.filter(d => d.key !== "");
-
-                // Calculate total embarked passengers
-                let totalEmbarked = d3.sum(data, d => d.embarked_total);
-
-                // Set up the dimensions of the SVG element
+                // !---- Data Visualizations Start ---! //
                 let width = 600;
-                let height = 400;
-                let margin = { top: 50, right: 20, bottom: 100, left: 70 };
+                let height = 600;
+                let margin = { top: 20, right: 20, bottom: 30, left: 40 }
                 const innerWidth = width - margin.left - margin.right;
                 const innerHeight = height - margin.top - margin.bottom;
 
-                // Create SVG for the bar graph
-                let svg = d3.select("#departure").append("svg")
-                    .attr("id", "bar-graph")
-                    .attr("width", width)
-                    .attr("height", height);
+                // !---- Radial Chart ----! //
+                let svg = d3.select("#radarChart");
 
-                // Add title
-                svg.append("text")
-                        .attr("x", width / 2)
-                        .attr("y", margin.top / 2)
-                        .attr("text-anchor", "middle")
-                        .style("font-size", "20px")
-                        .text("Total Embarked per Port");
+                let radialScale = d3.scaleLinear().domain([0, 1]).range([0, 200]);
+                let line = d3.line().x(d => d.x).y(d => d.y);
 
-                // Create scales
-                let xScale = d3.scaleBand()
-                    .domain(data.map(d => d.key))
-                    .range([margin.left, innerWidth])
-                    .padding(0.1);
+                function angleToCoordinate(angle, value) {
+                    let x = Math.cos(angle) * radialScale(value);
+                    let y = Math.sin(angle) * radialScale(value);
+                    return { "x": width / 2 + x, "y": height / 2 - y };
+                }
 
-                let yScale = d3.scaleLinear()
-                    .domain([0, d3.max(data, d => d.embarked_total)])
-                    .range([innerHeight, margin.top]);
+                function getPathCoordinates(data_point, features) {
+                    let coordinates = features.map((f, i) => {
+                        let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
+                        let value = data_point.find(d => d.key === f);
+                        return angleToCoordinate(angle, value ? value.value : 0);
+                    });
+                    coordinates.push(coordinates[0]); // Close the path
+                    return coordinates;
+                }
 
-                // Create bars
-                svg.selectAll("rect")
-                    .data(data)
-                    .enter().append("rect")
-                    .attr("x", d => xScale(d.key))
-                    .attr("y", d => yScale(d.embarked_total))
-                    .attr("width", xScale.bandwidth())
-                    .attr("height", d => innerHeight - yScale(d.embarked_total))
-                    .attr("fill", "steelblue")
-                    // Add hover effect
-                    .on("mouseover", function(d) {
-                        // Display total on hover
-                        svg.append("text")
-                            .attr("class", "total-label")
-                            .attr("id", "total-label-" + d.key)
-                            .attr("x", xScale(d.key) + xScale.bandwidth() / 2)
-                            .attr("y", yScale(d.embarked_total) - 10)
-                            .attr("text-anchor", "middle")
-                            .text(d.embarked_total);
-                    })
-                    .on("mouseout", function(d) {
-                        // Remove total on mouseout
-                        svg.select("#total-label-" + d.key).remove();
+                function createRadarChart(data, features, labels) {
+                    // Draw circles
+                    svg.selectAll("circle").remove();
+                    svg.selectAll("circle")
+                        .data([0.2, 0.4, 0.6, 0.8, 1.0])
+                        .enter().append("circle")
+                        .attr("cx", width / 2)
+                        .attr("cy", height / 2)
+                        .attr("fill", "none")
+                        .attr("stroke", "gray")
+                        .attr("r", d => radialScale(d));
+
+                    // Add ticks
+                    svg.selectAll(".ticklabel").remove();
+                    svg.selectAll(".ticklabel")
+                        .data([0.2, 0.4, 0.6, 0.8, 1.0])
+                        .enter().append("text")
+                        .attr("class", "ticklabel")
+                        .attr("x", width / 2 + 5)
+                        .attr("y", d => height / 2 - radialScale(d))
+                        .text(d => Math.round(d * 100) + "%");
+
+                    // Plotting the Axes
+                    let featureData = features.map((f, i) => {
+                        let angle = (Math.PI / 2) - (2 * Math.PI * i / features.length);
+                        return {
+                            "name": f,
+                            "angle": angle,
+                            "line_coord": angleToCoordinate(angle, 1),
+                            "label_coord": angleToCoordinate(angle, 1.1)
+                        };
                     });
 
-                // Display total of all embarked passengers
-                svg.append("text")
-                    .attr("class", "total-label")
-                    .attr("x", width / 2)
-                    .attr("y", height - 10) // Adjusted position to avoid overlapping with x-axis labels
-                    .attr("text-anchor", "middle")
-                    .text("Total Embarked: " + totalEmbarked);
+                    // Draw axis line
+                    svg.selectAll("line").remove();
+                    svg.selectAll("line")
+                        .data(featureData)
+                        .enter().append("line")
+                        .attr("x1", width / 2)
+                        .attr("y1", height / 2)
+                        .attr("x2", d => d.line_coord.x)
+                        .attr("y2", d => d.line_coord.y)
+                        .attr("stroke", "black");
 
-                // Create x-axis title
-                svg.append("text")
-                        .attr("class", "axis-title")
+                    // Draw axis label
+                    svg.selectAll(".axislabel").remove();
+                    if (labels) {
+                        svg.selectAll(".axislabel")
+                            .data(featureData)
+                            .enter().append("text")
+                            .attr("class", "axislabel")
+                            .attr("x", d => d.label_coord.x)
+                            .attr("y", d => d.label_coord.y)
+                            .text(d => d.name);
+                    }
+
+                    // Draw radar chart
+                    let path = svg.selectAll("path").data([data]);
+                    path.exit().remove();
+                    path.enter().append("path")
+                        .attr("stroke-width", 3)
+                        .attr("stroke-opacity", 1)
+                        .attr("opacity", 0.5)
+                        .merge(path)
+                        .transition().duration(2000)
+                        .attr("d", d => line(getPathCoordinates(d, features)))
+                        .attr("stroke", "purple")
+                        .attr("fill", "purple");
+                }
+
+            function createButton(attribute, data, features, labels) {
+                    let button = document.createElement("button");
+                    button.textContent = `${attribute}`;
+                    button.addEventListener("click", function () {
+                        createRadarChart(data, features, labels);
+                    });
+                    document.getElementById("buttons").appendChild(button);
+            }        
+
+                // !---- Data Processing ----! //
+                d3.csv("Titanic_dataset.csv").then(function (data) {
+                    
+                    let survivalDataPclass = d3.nest()
+                        .key(function (d) { return d.pclass.toString(); })
+                        .rollup(function (v) {
+                            let total = v.length;
+                            let survived = d3.sum(v, function (d) { return +d.survived; });
+                            return survived / total;
+                        })
+                        .entries(data)
+                        .map(function (d) {
+                            return { key: d.key, value: d.value };
+                        });
+
+                    let survivalDataFare = d3.nest()
+                        .key(function (d) {
+                            let fare = +d.fare;
+                            if (fare < 50) return "0~49";
+                            else if (fare < 100) return "50~99";
+                            else if (fare < 150) return "100~149";
+                            else if (fare < 200) return "150~199";
+                            else return "200~";
+                        })
+                        .rollup(function (v) {
+                            let total = v.length;
+                            let survived = d3.sum(v, function (d) { return +d.survived; });
+                            return survived / total;
+                        })
+                        .entries(data)
+                        .map(function (d) {
+                            return { key: d.key, value: d.value };
+                        });
+
+                    let survivalDataAge = d3.nest()
+                        .key(function (d) {
+                            let age = +d.age;
+                            if (age < 20) return "0~19";
+                            else if (age < 40) return "20~39";
+                            else if (age < 60) return "40~59";
+                            else if (age < 80) return "60~79";
+                            else return "80~";
+                        })
+                        .rollup(function (v) {
+                            let total = v.length;
+                            let survived = d3.sum(v, function (d) { return +d.survived; });
+                            return survived / total;
+                        })
+                        .entries(data)
+                        .map(function (d) {
+                            return { key: d.key, value: d.value };
+                        });
+
+                    let survivalDataEmbarked = d3.nest()
+                        .key(function (d) { return d.embarked.toString(); })
+                        .rollup(function (v) {
+                            let total = v.length;
+                            let survived = d3.sum(v, function (d) { return +d.survived; });
+                            return {
+                                "percent_survived": survived / total,
+                                "total_embarked_port": total
+                            };
+                        })
+                        .entries(data)
+                        .map(function (d) {
+                            return { key: d.key, value: d.value.percent_survived, embarked_total: d.value.total_embarked_port };
+                        });
+
+                    let survivalDataGender = d3.nest()
+                        .key(function (d) { return d.sex.toString(); })
+                        .rollup(function (v) {
+                            let total = v.length;
+                            let survived = d3.sum(v, function (d) { return +d.survived; });
+                            return survived / total;
+                        })
+                        .entries(data)
+                        .map(function (d) {
+                            return { key: d.key, value: d.value };
+                        });
+                    
+                    let survivalDataTicket = d3.nest()
+                        .key(function (d) {
+                            let age = +d.ticket;
+                            if (age < 100000) return "0~100000";
+                            else if (age < 200000 ) return "100000~200000";
+                            else return "300000~";
+                        })
+                        .rollup(function (v) {
+                            let total = v.length;
+                            let survived = d3.sum(v, function (d) { return +d.survived; });
+                            return survived / total;
+                        })
+                        .entries(data)
+                        .map(function (d) {
+                            return { key: d.key, value: d.value };
+                        });
+
+                    createButton("Pclass", survivalDataPclass, ["1", "2", "3"], true);
+                    createButton("Fare", survivalDataFare, ["0~49", "50~99", "100~149", "150~199", "200~"], true);
+                    createButton("Age", survivalDataAge, ["0~19", "20~39", "40~59", "60~79", "80~"], true);
+                    createButton("Embarked", survivalDataEmbarked, ["C","Q","S"], true);
+                    createButton("Ticket", survivalDataTicket, ["0~100000","100000~200000","300000~"], true);
+                    createButton("Gender", survivalDataGender, ["male","female"], true);
+                    
+
+                    // Initial radar chart display
+                    createRadarChart(survivalDataPclass, ["1","2","3"], true);
+                });
+
+                // !---- Bar Chart ----! //
+                d3.csv("Titanic_dataset.csv").then(function(data) {
+                    let survivalDataEmbarked = d3.nest()
+                        .key(function(d) { return d.embarked.toString(); })
+                        .rollup(function(v) {
+                            let total = v.length;
+                            let survived = d3.sum(v, function(d) { return +d.survived; });
+                            return {
+                                "total_embarked_port": total
+                            };
+                        })
+                        .entries(data)
+                        .map(function(d) {
+                            console.log("d.key.length: ", d.key.length)
+                                return { key: d.key, embarked_total: d.value.total_embarked_port };
+                        });
+                        
+                    // Call createBarGraph after the data is processed
+                    createBarGraph(survivalDataEmbarked);
+                });
+
+                function createBarGraph(data) {
+                    // Remove any existing bar graph
+                    d3.select("#bar-graph").remove();
+
+                    // Filtering data
+                    data = data.filter(d => d.key !== "");
+
+                    // Calculate total embarked passengers
+                    let totalEmbarked = d3.sum(data, d => d.embarked_total);
+
+                    // Set up the dimensions of the SVG element
+                    let width = 600;
+                    let height = 400;
+                    let margin = { top: 50, right: 20, bottom: 100, left: 70 };
+                    const innerWidth = width - margin.left - margin.right;
+                    const innerHeight = height - margin.top - margin.bottom;
+
+                    // Create SVG for the bar graph
+                    let svg = d3.select("#departure").append("svg")
+                        .attr("id", "bar-graph")
+                        .attr("width", width)
+                        .attr("height", height);
+
+                    // Add title
+                    svg.append("text")
+                            .attr("x", width / 2)
+                            .attr("y", margin.top / 2)
+                            .attr("text-anchor", "middle")
+                            .style("font-size", "20px")
+                            .text("Total Embarked per Port");
+
+                    // Create scales
+                    let xScale = d3.scaleBand()
+                        .domain(data.map(d => d.key))
+                        .range([margin.left, innerWidth])
+                        .padding(0.1);
+
+                    let yScale = d3.scaleLinear()
+                        .domain([0, d3.max(data, d => d.embarked_total)])
+                        .range([innerHeight, margin.top]);
+
+                    // Create bars
+                    svg.selectAll("rect")
+                        .data(data)
+                        .enter().append("rect")
+                        .attr("x", d => xScale(d.key))
+                        .attr("y", d => yScale(d.embarked_total))
+                        .attr("width", xScale.bandwidth())
+                        .attr("height", d => innerHeight - yScale(d.embarked_total))
+                        .attr("fill", "steelblue")
+                        // Add hover effect
+                        .on("mouseover", function(d) {
+                            // Display total on hover
+                            svg.append("text")
+                                .attr("class", "total-label")
+                                .attr("id", "total-label-" + d.key)
+                                .attr("x", xScale(d.key) + xScale.bandwidth() / 2)
+                                .attr("y", yScale(d.embarked_total) - 10)
+                                .attr("text-anchor", "middle")
+                                .text(d.embarked_total);
+                        })
+                        .on("mouseout", function(d) {
+                            // Remove total on mouseout
+                            svg.select("#total-label-" + d.key).remove();
+                        });
+
+                    // Display total of all embarked passengers
+                    svg.append("text")
+                        .attr("class", "total-label")
                         .attr("x", width / 2)
-                        .attr("y", height -105) 
+                        .attr("y", height - 10)
                         .attr("text-anchor", "middle")
-                        .text("Port");
+                        .text("Total Embarked: " + totalEmbarked);
 
-                // Create y-axis title
-                svg.append("text")
-                    .attr("class", "axis-title")
-                    .attr("transform", "rotate(-90)")
-                    .attr("x", -height / 2.5)
-                    .attr("y", 20) 
-                    .attr("text-anchor", "middle")
-                    .text("Total Embarked");    
+                    // Create x-axis title
+                    svg.append("text")
+                            .attr("class", "axis-title")
+                            .attr("x", width / 2)
+                            .attr("y", height -105) 
+                            .attr("text-anchor", "middle")
+                            .text("Port");
 
-                // Create x-axis
-                svg.append("g")
-                    .attr("transform", `translate(0, ${innerHeight})`)
-                    .call(d3.axisBottom(xScale));
+                    // Create y-axis title
+                    svg.append("text")
+                        .attr("class", "axis-title")
+                        .attr("transform", "rotate(-90)")
+                        .attr("x", -height / 2.5)
+                        .attr("y", 20) 
+                        .attr("text-anchor", "middle")
+                        .text("Total Embarked");    
 
-                // Create y-axis
-                svg.append("g")
-                    .attr("transform", `translate(${margin.left}, 0)`)
-                    .call(d3.axisLeft(yScale));
+                    // Create x-axis
+                    svg.append("g")
+                        .attr("transform", `translate(0, ${innerHeight})`)
+                        .call(d3.axisBottom(xScale));
 
-                // Create legend
-                let legend = svg.append("g")
-                    .attr("class", "legend")
-                    .attr("transform", `translate(${innerWidth - 100}, ${height - margin.bottom + 30})`);
+                    // Create y-axis
+                    svg.append("g")
+                        .attr("transform", `translate(${margin.left}, 0)`)
+                        .call(d3.axisLeft(yScale));
 
-                legend.append("text")
-                    .text("Legend:")
-                    .attr("font-weight", "bold")
-                    .attr("dy", -10);
+                    // Create legend
+                    let legend = svg.append("g")
+                        .attr("class", "legend")
+                        .attr("transform", `translate(${innerWidth - 100}, ${height - margin.bottom + 30})`);
 
-                legend.append("text")
-                    .text("Q = Queenstown")
-                    .attr("dy", 10);
+                    legend.append("text")
+                        .text("Legend:")
+                        .attr("font-weight", "bold")
+                        .attr("dy", -10);
 
-                legend.append("text")
-                    .text("C = Cherbourg")
-                    .attr("dy", 25);
+                    legend.append("text")
+                        .text("Q = Queenstown")
+                        .attr("dy", 10);
 
-                legend.append("text")
-                    .text("S = Southampton")
-                    .attr("dy", 40);
-            }            
-        </script>
+                    legend.append("text")
+                        .text("C = Cherbourg")
+                        .attr("dy", 25);
+
+                    legend.append("text")
+                        .text("S = Southampton")
+                        .attr("dy", 40);
+                }            
+            </script>
     </section>
 </body>
 </html>
